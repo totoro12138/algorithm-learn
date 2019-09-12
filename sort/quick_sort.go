@@ -26,71 +26,67 @@ func main() {
 	//	},
 	//}
 	list := List{
-		Values: []int{
-			4, 7, 6, 5, 3, 2, 8, 1,
-		},
+		4, 7, 6, 5, 3, 2, 8, 1,
 	}
-	list.quickSort(0, len(list.Values)-1)
+	list.quickSort(0, len(list)-1)
 	fmt.Println(list)
 }
 
-type List struct {
-	Values []int
-}
+type List []int
 
 // 双边循环法
-func (l *List) partitionV1(startIdx, endIdx int) int {
+func (l List) partitionV1(startIdx, endIdx int) int {
 	rand.Seed(time.Now().Unix())
 	idx := rand.Int()%(endIdx-startIdx+1) + startIdx
-	pivot := l.Values[idx]
+	pivot := l[idx]
 	//fmt.Println("[pivot]", pivot)
-	fmt.Println("[1]", l.Values[startIdx:endIdx+1])
-	l.Values[startIdx], l.Values[idx] = l.Values[idx], l.Values[startIdx]
-	fmt.Println("[2]", l.Values[startIdx:endIdx+1])
+	fmt.Println("[1]", l[startIdx:endIdx+1])
+	l[startIdx], l[idx] = l[idx], l[startIdx]
+	fmt.Println("[2]", l[startIdx:endIdx+1])
 	left := startIdx
 	right := endIdx
 	fmt.Println("left", left, "right", right)
 	for left != right {
-		for left < right && l.Values[right] > pivot {
+		for left < right && l[right] > pivot {
 			right--
 		}
-		for left < right && l.Values[left] <= pivot {
+		for left < right && l[left] <= pivot {
 			left++
 		}
 
 		if left < right {
-			l.Values[left], l.Values[right] = l.Values[right], l.Values[left]
+			l[left], l[right] = l[right], l[left]
 		}
 	}
 
-	l.Values[startIdx], l.Values[left] = l.Values[left], l.Values[startIdx]
-	fmt.Println("[3]", l.Values[startIdx:endIdx+1])
+	l[startIdx], l[left] = l[left], l[startIdx]
+	fmt.Println("[3]", l[startIdx:endIdx+1])
 	return left
 }
 
 // 单边循环法
-func (l *List) partitionV2(startIdx, endIdx int) int {
+func (l List) partitionV2(startIdx, endIdx int) int {
 	rand.Seed(time.Now().Unix())
 	idx := rand.Int()%(endIdx-startIdx+1) + startIdx
-	pivot := l.Values[idx]
+	pivot := l[idx]
 	//fmt.Println("[pivot]", pivot)
-	fmt.Println("[1]", l.Values[startIdx:endIdx+1])
-	l.Values[startIdx], l.Values[idx] = l.Values[idx], l.Values[startIdx]
-	fmt.Println("[2]", l.Values[startIdx:endIdx+1])
+	fmt.Println("[1]", l[startIdx:endIdx+1])
+	l[startIdx], l[idx] = l[idx], l[startIdx]
+	fmt.Println("[2]", l[startIdx:endIdx+1])
 	mark := startIdx
 	for i := startIdx + 1; i <= endIdx; i++ {
-		if l.Values[i] < pivot {
+		if l[i] < pivot {
 			mark++
-			l.Values[i], l.Values[mark] = l.Values[mark], l.Values[i]
+			l[i], l[mark] = l[mark], l[i]
 		}
 	}
 
-	l.Values[startIdx], l.Values[mark] = l.Values[mark], l.Values[startIdx]
-	fmt.Println("[3]", l.Values[startIdx:endIdx+1])
+	l[startIdx], l[mark] = l[mark], l[startIdx]
+	fmt.Println("[3]", l[startIdx:endIdx+1])
 	return mark
 }
 
-func (l *List) quickSort(startIdx, endIdx int) {
+func (l List) quickSort(startIdx, endIdx int) {
 	if startIdx >= endIdx {
 		return
 	}
