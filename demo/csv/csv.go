@@ -68,6 +68,7 @@ type SQLValue struct {
 }
 
 func getData() [][]string {
+	// 此处可为数据库操作
 	sqlValue := make([]*SQLValue, 1000000)
 	for i := range sqlValue {
 		sqlValue[i] = &SQLValue{
@@ -87,7 +88,6 @@ func getData() [][]string {
 		"ID", "CreateAt", "UpdateAt", "DeleteAt", "Username", "Sex", "Age", "Height",
 	}
 
-	// 此处可改为数据库查询数据
 	for i, v := range sqlValue {
 		if i == 0 {
 			continue
