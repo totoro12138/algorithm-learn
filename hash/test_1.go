@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"hash/crc32"
-	"log"
 )
 
 func main() {
