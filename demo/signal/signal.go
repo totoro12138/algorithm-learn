@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"sync"
@@ -40,7 +41,6 @@ func main() {
 		time.Sleep(time.Second * 3)
 		_, _ = writer.Write([]byte("success"))
 	})
-
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
