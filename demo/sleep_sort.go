@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh
 func main() {
 	list := []int{3, 5, 1, 10, 4, 2}
 	wg := sync.WaitGroup{}
