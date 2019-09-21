@@ -10,15 +10,15 @@ import (
 
 func main() {
 	wg := sync.WaitGroup{}
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 20; i++ {
 		time.Sleep(time.Second * 2)
 		wg.Add(1)
-		go Client(&wg)
+		go Client(i, &wg)
 	}
 	wg.Wait()
 }
 
-func Client(wg *sync.WaitGroup) {
+func Client(idx int, wg *sync.WaitGroup) {
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Println(err)
@@ -28,7 +28,7 @@ func Client(wg *sync.WaitGroup) {
 	}()
 	var i int
 	for {
-		resp, err := http.Get("http://127.0.0.1:8080")
+		resp, err := http.Get("http://192.168.1.192:8080")
 		if err != nil {
 			panic(err)
 		}
@@ -38,9 +38,9 @@ func Client(wg *sync.WaitGroup) {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println(i, ":", string(bytes))
+		fmt.Println("[", idx, "]", i, ":", string(bytes))
 		i++
-		time.Sleep(time.Microsecond * 100)
+		time.Sleep(time.Millisecond * 100)
 	}
 
 }
