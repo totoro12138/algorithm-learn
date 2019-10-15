@@ -1,0 +1,38 @@
+{
+  "receipt": {
+    "receipt_type": "ProductionSandbox",
+    "adam_id": 0,
+    "app_item_id": 0,
+    "bundle_id": "com.yiwei.youliao",
+    "application_version": "20191011",
+    "download_id": 0,
+    "version_external_identifier": 0,
+    "receipt_creation_date": "2019-10-11 13:17:50 Etc/GMT",
+    "receipt_creation_date_ms": "1570799870000",
+    "receipt_creation_date_pst": "2019-10-11 06:17:50 America/Los_Angeles",
+    "request_date": "2019-10-11 13:53:56 Etc/GMT",
+    "request_date_ms": "1570802036747",
+    "request_date_pst": "2019-10-11 06:53:56 America/Los_Angeles",
+    "original_purchase_date": "2013-08-01 07:00:00 Etc/GMT",
+    "original_purchase_date_ms": "1375340400000",
+    "original_purchase_date_pst": "2013-08-01 00:00:00 America/Los_Angeles",
+    "original_application_version": "1.0",
+    "in_app": [
+      {
+        "quantity": "1",
+        "product_id": "com.yiwei.youliao.money.16000",
+        "transaction_id": "1000000578253498",
+        "original_transaction_id": "1000000578253498",
+        "purchase_date": "2019-10-11 13:17:50 Etc/GMT",
+        "purchase_date_ms": "1570799870000",
+        "purchase_date_pst": "2019-10-11 06:17:50 America/Los_Angeles",
+        "original_purchase_date": "2019-10-11 13:17:50 Etc/GMT",
+        "original_purchase_date_ms": "1570799870000",
+        "original_purchase_date_pst": "2019-10-11 06:17:50 America/Los_Angeles",
+        "is_trial_period": "false"
+      }
+    ]
+  },
+  "status": 0,
+  "environment": "Sandbox"
+}

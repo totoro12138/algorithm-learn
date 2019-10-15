@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "target_type": "single",
+  "target_id": "9ba8808f-8779-442a-896d-8d4050c446ef",
+  "target_name": "lzk",
+  "from_type": "single",
+  "from_id": "bb7e9e9a-c8e3-4a56-915d-a1438da4060c",
+  "from_name": "hw",
+  "msg_type": "text",
+  "no_offline": true,
+  "no_notification": true,
+  "notification": {
+    "title": "hhhh",
+    "alert": "哈哈哈哈"
+  },
+  "msg_body": {
+    "text": "哈哈哈哈"
+  }
+}
