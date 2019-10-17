@@ -1,12 +1,14 @@
 package main
 
 import (
+	"algorithm-learn/demo/config"
 	"encoding/base64"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/astaxie/beego/httplib"
 	"io/ioutil"
+	"strconv"
+	"time"
 )
 
 const (
@@ -41,6 +43,7 @@ type Android struct {
 
 type Ios struct {
 	Alert string `json:"alert"`
+	Sound string `json:"sound"`
 }
 
 type Message struct {
@@ -49,8 +52,26 @@ type Message struct {
 	ContentType string `json:"content_type"` // 可选		消息内容类型
 }
 
-type Options struct {
+type Options interface {
+	Marshal() ([]byte, error)
+}
+
+type OptionsSend struct {
 	ApnsProduction bool `json:"apns_production"`
+}
+
+func (o *OptionsSend) Marshal() ([]byte, error) {
+	return json.Marshal(o)
+}
+
+type OptionsOverwrite struct {
+	ApnsProduction bool   `json:"apns_production"`
+	OverrideMsgID  int    `json:"override_msg_id"`
+	ApnsCollapseID string `json:"apns_collapse_id"`
+}
+
+func (o *OptionsOverwrite) Marshal() ([]byte, error) {
+	return json.Marshal(o)
 }
 
 type SmsMessage struct {
@@ -61,11 +82,21 @@ type SmsMessage struct {
 	ActiveFilter bool   `json:"active_filter"` // 可选	active_filter 字段用来控制是否对补发短信的用户进行活跃过滤，默认为 true ，做活跃过滤；为 false，则不做活跃过滤；
 }
 
-func JPush(p Type) error {
-	//appKey := beego.AppConfig.String("jpush_appkey")
-	//masterSecret := beego.AppConfig.String("master_secret")
-	appKey := ""
-	masterSecret := ""
+type PushResult struct {
+	Error *Error `json:"error"`
+
+	SendNo string `json:"sendno"`
+	MsgID  string `json:"msg_id"`
+}
+
+type Error struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
+func JPush(p Type) (result PushResult, err error) {
+	appKey := config.JPushAppKey
+	masterSecret := config.JPushMasterSecret
 	//if appKey == "" || masterSecret == "" {
 	//	panic("jpush config not found")
 	//}
@@ -78,37 +109,33 @@ func JPush(p Type) error {
 	req, err := httplib.Post("https://api.jpush.cn/v3/push").
 		Header("Authorization", " Basic "+base64.URLEncoding.EncodeToString([]byte(appKey+":"+masterSecret))).
 		Header("Content-Type", "application/json").
-		//Header("Authorization", base64.RawURLEncoding.EncodeToString([]byte(appKey+":"+masterSecret))).
 		JSONBody(p)
 	if err != nil {
-		return err
+		return PushResult{}, err
 	}
 
 	resp, err := req.DoRequest()
 	if err != nil {
-		return err
+		return PushResult{}, err
 	}
 
-	if resp.StatusCode != 200 {
-		bytes, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-		defer resp.Body.Close()
-		result := make(map[string]interface{})
-		err = json.Unmarshal(bytes, &result)
-		if err != nil {
-			return err
-		}
-		return errors.New(string(bytes))
+	bytes, err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return PushResult{}, err
 	}
-	all, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println(string(all))
-	return nil
+	defer resp.Body.Close()
+	fmt.Println(string(bytes))
+	//result := make(map[string]interface{})
+	err = json.Unmarshal(bytes, &result)
+	if err != nil {
+		return PushResult{}, err
+	}
+
+	return result, nil
 }
 
 func main() {
-	jpush := Type{
+	result, err := JPush(Type{
 		//Platform: "all",
 		Platform: []string{
 			PlatformAndroid,
@@ -117,28 +144,70 @@ func main() {
 		//Audience:"all",
 		Audience: Audience{
 			RegistrationID: []string{
-				"13165ffa4e6c731a894",
+				"190e35f7e02321351bf",
 			},
 		},
 		Notification: &Notification{
 			Android: &Android{
-				Alert: "123",
-				Title: "123",
+				Alert: "moyrn 发起通话",
+				Title: "moyrn",
 			},
 			Ios: &Ios{
-				Alert: "123",
+				Alert: "moyrn 发起通话",
+				Sound: "call",
 			},
 		},
-		Options: Options{ApnsProduction: false},
-		//Message: &Message{
-		//	MsgContent:  "123",
-		//	Title:       "123",
-		//	ContentType: "text",
-		//},
-	}
-
-	err := JPush(jpush)
+		Options: &OptionsSend{
+			ApnsProduction: false,
+		},
+	})
 	if err != nil {
 		panic(err)
 	}
+	if result.Error != nil {
+		panic(result)
+	}
+	fmt.Println(result)
+
+	time.Sleep(time.Second * 8)
+	msgIDInt, err := strconv.Atoi(result.MsgID)
+	if err != nil {
+		panic(err)
+	}
+
+	result, err = JPush(Type{
+		Platform: []string{
+			PlatformIos,
+			PlatformAndroid,
+		},
+		Audience: Audience{
+			RegistrationID: []string{
+				"190e35f7e02321351bf",
+			},
+		},
+		Notification: &Notification{
+			Android: &Android{
+				Alert: "moyrn 已结束拨号",
+				Title: "moyrn 已结束拨号",
+			},
+			Ios: &Ios{
+				Alert: "moyrn 已结束拨号",
+				Sound: "moyrn 已结束拨号",
+			},
+		},
+		Options: &OptionsOverwrite{
+			ApnsProduction: false,
+			OverrideMsgID:  msgIDInt,
+			ApnsCollapseID: result.MsgID,
+		},
+	})
+
+	if err != nil {
+		panic(err)
+	}
+	if result.Error != nil {
+		panic(result.Error)
+	}
+
+	fmt.Println(result)
 }
