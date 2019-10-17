@@ -41,12 +41,13 @@ func main() {
 	beego.Run()
 }
 
-func deadline(userID uint, notRun <-chan struct{}) {
+func deadline(userID uint, notRun chan struct{}) {
 	for {
 		select {
 		case <-notRun:
 		case <-time.After(time.Second * 6):
 			Connect.Remove(userID)
+			close(notRun)
 			fmt.Println("offline")
 
 			return
